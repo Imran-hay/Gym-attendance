@@ -114,17 +114,8 @@ if ($conn->query($sql4) === TRUE) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GYM</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+ 
 
-
-    <style>
-        li a{
-            text-decoration: none;
-        }
-        li a:active{
-            color: #fff;
-            background-color: #64549C;
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -137,13 +128,13 @@ if ($conn->query($sql4) === TRUE) {
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
               <ul class="navbar-nav float-center mx-auto mt-2 mt-lg-0">
                 <li class="nav-item border-bottom border-dark mr-4">
-                  <a class="nav-link text-dark" href="register.html">Register</a>
+                  <a class="nav-link text-dark" href="register.php">Register</a>
                 </li>
                 <li class="nav-item mr-4">
-                  <a class="nav-link text-dark" href="#">QR Scan</a>
+                  <a class="nav-link text-dark" href="qr-scan.php">QR Scan</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link text-dark" href="#">Basic Data</a>
+                  <a class="nav-link text-dark" href="basic-data.php">Basic Data</a>
                 </li>
               </ul>
               <form class="form-inline my-2 my-lg-0">
@@ -152,6 +143,7 @@ if ($conn->query($sql4) === TRUE) {
             </div>
           </nav>
     </header>
+    
 
     <div class="container mt-5">
         <div class="row justify-content-between">

@@ -63,7 +63,7 @@ if ($result->num_rows > 0) {
 
 </head>
 
-<body>
+<body class="body">
 
 <div class="login-box">
 
