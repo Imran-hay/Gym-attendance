@@ -78,6 +78,21 @@ $output = "user created successfully <br> their id is $id. <br> Qrcode is saved 
 //header('Content-Type: image/png');
 //readfile($filename);
 
+$image_data = file_get_contents("../Images/qrcodes/$id.png");
+
+// Escape special characters in the image data
+$image_data = mysqli_real_escape_string($conn, $image_data);
+
+$sql4 = "INSERT INTO qrcode 
+VALUES ('$image_data', '$id')";
+
+if ($conn->query($sql4) === TRUE) {
+  //echo "New record created successfully";
+} else {
+  echo "Error: " . $sql4 . "<br>" . $conn->error;
+}
+
+
 
 }
 
