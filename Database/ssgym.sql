@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 17, 2023 at 04:57 PM
+-- Generation Time: Jul 19, 2023 at 08:38 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.0.25
 
@@ -70,7 +70,8 @@ CREATE TABLE `plan` (
 --
 
 INSERT INTO `plan` (`cash`, `workingdays`, `month`, `id`) VALUES
-(12, 12, '0000-00-00', 'SS2');
+(12, 12, '0000-00-00', 'SS2'),
+(12, 12, '0000-00-00', 'SS3');
 
 -- --------------------------------------------------------
 
@@ -82,6 +83,56 @@ CREATE TABLE `qrcode` (
   `qrcode` blob DEFAULT NULL,
   `id` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `qrcode`
+--
+
+INSERT INTO `qrcode` (`qrcode`, `id`) VALUES
+(0x89504e470d0a1a0a0000000d49484452000000570000005701030000004b064b2f00000006504c5445ffffff00000055c2d37e000000097048597300000ec400000ec401952b0e1b000000b049444154388dcdd2b10dc4200c0550472ee8c20291b2061d2b6583840560253ad6b0c404d75144e17c912eb982336d5c3d0aa4cf37004f1b5dab4bb956123c0286841b88b639c41c4ac72e61d71e72c7805ee52b43d39cdf9bfb2d4d9f47faa9a2619df055f0b092873a2d065d940c6a76651f2209d68cf40df0c760b928ae94247fe2c17a5d6ff9ec615a9464ee73b3fb1a49f2b9bbc376ec15b7d1f1666804d1fcdfe2ec0d08e6fc2191ae929f356f5bf9fea189b46fc80000000049454e44ae426082, 'SS3');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `recent`
+--
+
+CREATE TABLE `recent` (
+  `ID` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `recent`
+--
+
+INSERT INTO `recent` (`ID`) VALUES
+('SS2'),
+('SS2'),
+('SS3'),
+('SS3');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `table_attendance`
+--
+
+CREATE TABLE `table_attendance` (
+  `ID` varchar(255) NOT NULL,
+  `ATTENDANT_NAME` varchar(50) NOT NULL,
+  `TIMEIN` varchar(250) NOT NULL,
+  `TIMEOUT` varchar(250) NOT NULL,
+  `LOGDATE` varchar(250) NOT NULL,
+  `STATUS` varchar(250) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `table_attendance`
+--
+
+INSERT INTO `table_attendance` (`ID`, `ATTENDANT_NAME`, `TIMEIN`, `TIMEOUT`, `LOGDATE`, `STATUS`) VALUES
+('SS2', 'fvd dfd', '2023-07-19 09:36:05', '2023-07-19 09:36:13', '2023-07-19', '1'),
+('SS3', 'dsfsdf sdfdsf', '2023-07-19 09:36:55', '2023-07-19 09:36:55', '2023-07-19', '1');
 
 -- --------------------------------------------------------
 
@@ -106,7 +157,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `fname`, `lname`, `age`, `gender`, `purpose`, `occupation`, `phone`) VALUES
 ('ss001', 'milky', 'mohammed', 22, 'M', 'body builder', 'student', NULL),
-('SS2', 'fvd', 'dfd', 3, 'M', 'dfsf', 'sdfdf', '0927727196');
+('SS2', 'fvd', 'dfd', 3, 'M', 'dfsf', 'sdfdf', '0927727196'),
+('SS3', 'dsfsdf', 'sdfdsf', 122, 'M', 'dfsf', 'sdfsdfs', '0927727196');
 
 --
 -- Indexes for dumped tables
@@ -135,6 +187,12 @@ ALTER TABLE `plan`
 --
 ALTER TABLE `qrcode`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `table_attendance`
+--
+ALTER TABLE `table_attendance`
+  ADD PRIMARY KEY (`ID`);
 
 --
 -- Indexes for table `users`
