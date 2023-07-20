@@ -3,6 +3,7 @@
 
   //echo "<h1>$id</h1>";
   $name = "";
+  $message = "";
   if($id != "")
   {
     $sql = "SELECT * FROM users WHERE id='$id'";
@@ -11,15 +12,53 @@
     if ($result->num_rows > 0) {
       // output data of each row
       while($row = $result->fetch_assoc()) {
-         $name = $row["fname"] . " " . $row['lname'];
+         $name = $row["fullname"];
+      }
+    } else {
+      //echo "<h1>id not found</h1>";
+    }
+    ////////////////////////////////////////////////
+
+    $sql5 = "SELECT * FROM plan WHERE id='$id'";
+    $result5 = $conn->query($sql5);
+    
+    if ($result5->num_rows > 0) {
+      // output data of each row
+      while($row5 = $result5->fetch_assoc()) {
+         $days = $row5["workingdays"];
+         $month = $row5["month"];
+         $rd = $row5["RegistrationDate"];
       }
     } else {
       //echo "<h1>id not found</h1>";
     }
     
     
-    //////////////
-    
+    ///////////////////////////////////////////////////////////
+    $date_start = $rd; 
+    $today = date("Y-m-d");
+
+    $interval = "$month". " " . "month"; 
+    $dt = new DateTime($date_start);
+    $dt->modify('+' . $interval);
+    $new_date = $dt->format('Y-m-d');
+    echo $new_date; // Output: 2023-08-20
+    ///////////////////////////////////////////////////////
+    if($days == 0)
+    {
+      $message = "subscription ended";
+    }
+    //////////////////////////////////////////////////////////
+    if($today == $new_date)
+    {
+      $message = "subscription expired";
+
+    }
+
+    ///////////////////////////////////////////////////////////
+    else{
+
+   
     $date = date('Y-m-d');
     $time = date('h:i:sa');
     $sql2 = "SELECT * FROM table_attendance WHERE ID='$id' AND LOGDATE='$date' AND STATUS='0'";
@@ -47,7 +86,15 @@ if ($conn->query($sql31) === TRUE) {
           VALUES ('$id')";
   
   if ($conn->query($sql41) === TRUE) {
-    //echo "New record created successfully";
+    $days = $days-1;
+    $sql411 = "UPDATE plan SET workingdays=$days WHERE id = '$id'";
+
+if ($conn->query($sql411) === TRUE) {
+  //echo "Record updated successfully";
+} else {
+  //echo "Error updating record" . $conn->error;
+}
+    $message = $days;
   } else {
     echo "Error: " . $sql41 . "<br>" . $conn->error;
   }
@@ -66,6 +113,7 @@ if ($conn->query($sql31) === TRUE) {
 
 
   }
+}
 
 
  
@@ -125,6 +173,7 @@ if ($conn->query($sql31) === TRUE) {
             <div class="col-4 border border-dark" style="height: 50vh;">
                 <p class="text-center mt-5">customer ID: <b><?php echo $id ?></b></p>
                 <p class="text-center mt-5">customer Name: <b><?php echo $name ?></b></p>
+                <p class="text-center mt-5" style="color: #64549C;">Days Remaining: <b><?php echo $message ?></b></p>
                 <form method="get" action="" name="f1" id="f1">
                 <input type="text" name="text" id="text" readonly="" value="<?php echo $id ?>" placeholder="Scan qrcode" class="form-control">
                 </form>

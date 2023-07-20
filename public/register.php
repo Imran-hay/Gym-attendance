@@ -39,11 +39,12 @@ if(isset($_POST['butt']))
     $cash = $_POST["cash"];
     $wd = $_POST['wd'];
     $month = $_POST['month'];
+    $fullname = $fname . " " . $lname;
 
    // enter data to the users
 
    $sql2 = "INSERT INTO users 
-VALUES ('$id', '$fname', '$lname','$age','$gender','$purpose', '$occupation', '$phone')";
+VALUES ('$id', '$fullname','$age','$gender','$purpose', '$occupation', '$phone')";
 
 if ($conn->query($sql2) === TRUE) {
   //echo "New record created successfully";
@@ -53,9 +54,9 @@ if ($conn->query($sql2) === TRUE) {
 
 
    //insert to plan
-
+   $today = date('Y-m-d');
    $sql3 = "INSERT INTO plan 
-   VALUES ('$cash', '$wd', '$month', '$id')";
+   VALUES ('$cash', '$wd', '$month', '$id', '$today')";
    
    if ($conn->query($sql3) === TRUE) {
      //echo "New record created successfully";
