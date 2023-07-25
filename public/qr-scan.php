@@ -15,12 +15,13 @@ require_once '../Database/DB.php';
     
     if ($result->num_rows > 0) {
       // output data of each row
-      echo "getname";
+      //echo "getname";
       while($row = $result->fetch_assoc()) {
          $name = $row["fullname"];
       }
     } else {
-      //echo "<h1>id not found</h1>";
+      echo "<h1>id not found</h1>";
+      header('Location:qr-scan.php');
     }
     ////////////////////////////////////////////////
 
@@ -29,14 +30,15 @@ require_once '../Database/DB.php';
     
     if ($result5->num_rows > 0) {
       // output data of each row
-      echo "getday";
+      
       while($row5 = $result5->fetch_assoc()) {
          $days = $row5["workingdays"];
          $month = $row5["month"];
          $rd = $row5["RegistrationDate"];
       }
     } else {
-      //echo "<h1>id not found</h1>";
+      echo "<h1>id not found</h1>";
+      header('Location:qr-scan.php');
     }
     
     
@@ -50,7 +52,7 @@ require_once '../Database/DB.php';
     //echo $new_date; // Output: 2023-08-20
     
     ///////////////////////////////////////////////////////
-    echo "<h1>$days</h1>";
+   // echo "<h1>$days</h1>";
     if($days == 0)
     {
       $message = "subscription ended";
