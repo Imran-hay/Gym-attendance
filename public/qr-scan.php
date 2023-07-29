@@ -1,16 +1,21 @@
-<?php require 'id.php'; require_once '../Database/DB.php';
+<?php //require 'id.php'; 
+require_once '../Database/DB.php';
 
 
   //echo "<h1>$id</h1>";
   $name = "";
   $message = "";
-  if($id != "")
+  $id = "";
+  if(isset($_POST['text']))
   {
+    $id = $_POST['text'];
+
     $sql = "SELECT * FROM users WHERE id='$id'";
     $result = $conn->query($sql);
     
     if ($result->num_rows > 0) {
       // output data of each row
+      echo "getname";
       while($row = $result->fetch_assoc()) {
          $name = $row["fullname"];
       }
@@ -24,6 +29,7 @@
     
     if ($result5->num_rows > 0) {
       // output data of each row
+      echo "getday";
       while($row5 = $result5->fetch_assoc()) {
          $days = $row5["workingdays"];
          $month = $row5["month"];
@@ -42,10 +48,12 @@
     $dt->modify('+' . $interval);
     $new_date = $dt->format('Y-m-d');
     //echo $new_date; // Output: 2023-08-20
+    
     ///////////////////////////////////////////////////////
     if($days == 0)
     {
       $message = "subscription ended";
+      
     }
     //////////////////////////////////////////////////////////
     if($today == $new_date)
@@ -58,7 +66,7 @@
   
     else{
 
-     
+    
     $date = date('Y-m-d');
     $time = date('h:i:sa');
     $sql2 = "SELECT * FROM table_attendance WHERE ID='$id' AND LOGDATE='$date' AND STATUS='0'";
@@ -67,7 +75,7 @@
       $udate = $days;
      // $udate = $udate -1;
       $message = $udate;
-        
+     
         $sql3 = "UPDATE table_attendance SET TIMEOUT=NOW(), STATUS='1' WHERE ID='$id' AND LOGDATE='$date'";
         $query3 = $conn->query($sql3);
        
@@ -85,8 +93,10 @@ if ($conn->query($sql31) === TRUE) {
         ///
         
     }else{
+     
         $sq4 = "INSERT INTO table_attendance(ID,ATTENDANT_NAME,TIMEIN,LOGDATE,STATUS) VALUES('$id','$name',NOW(),'$date','0')";
         if($conn->query($sq4) ===TRUE){
+        
           $sql41 = "INSERT INTO recent 
           VALUES ('$id')";
            $days = $days-1;
@@ -95,6 +105,7 @@ if ($conn->query($sql31) === TRUE) {
   if ($conn->query($sql41) === TRUE) {
  
     $sql411 = "UPDATE plan SET workingdays=$days WHERE id = '$id'";
+   
 
 if ($conn->query($sql411) === TRUE) {
   //echo "Record updated successfully";
@@ -182,7 +193,7 @@ if ($conn->query($sql411) === TRUE) {
                 <p class="text-center mt-5">customer ID: <b><?php echo $id ?></b></p>
                 <p class="text-center mt-5">customer Name: <b><?php echo $name ?></b></p>
                 <p class="text-center mt-5" style="color: #64549C;">Days Remaining: <b><?php echo $message ?></b></p>
-                <form method="get" action="" name="f1" id="f1">
+                <form method="post" action="qr-scan.php" name="f1" id="f1">
                 <input type="text" name="text" id="text" readonly="" value="<?php echo $id ?>" placeholder="Scan qrcode" class="form-control">
                 </form>
                 <div class="d-flex flex-row justify-content-center align-items-center" style="height: 30vh;">
@@ -326,7 +337,7 @@ if ($conn->query($sql411) === TRUE) {
            
             var myData = c;
 
-            document.getElementById('f1').action = 'qr-scan.php?query=' + encodeURIComponent(myData); 
+           // document.getElementById('f1').action = 'qr-scan.php?query=' + encodeURIComponent(myData); 
             var form = document.getElementById('f1');
             form.submit();
 

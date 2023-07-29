@@ -10,21 +10,28 @@ use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 
-
+$l = 0;
 $term = '';
 $results = '';
 $arr = array();$arr2 = array();$arr3 = array();$arr4 = array();$arr5 = array();$arr6 = array();$arr7 = array();
-$arr8 = array();$arr9 = array(); $arr10 = array();
+$arr8 = array();$arr9 = array(); $arr10 = array();  $arr11 = array(); $arrn = "";
 
 $a1 = array();
 $a2 = array();
 $a3 = array();
 $a4 = array();
 $a5 = array();
+$counter = 0;
+$counter2 = 0;
+$values = '';
 if(isset( $_GET['search_term']))
 {
     $term = $_GET['search_term'];
-   // echo "<h1>$term</h1>";
+    //$string = "The price is $19.99, and the quantity is 10.";
+
+
+   
+
 
     $search_term = filter_input(INPUT_GET, "$term", FILTER_SANITIZE_STRING);
 
@@ -63,6 +70,13 @@ while ($row = $result->fetch_assoc()) {
     array_push($arr8,$row['workingdays']);
     array_push($arr9,$row['RegistrationDate']);
     array_push($arr10,$row['month']);
+    array_push($arr11,$row['id']);
+    preg_match('/\d+/', $row['id'], $matches);
+    $arrn= $arrn. $matches[0] . " ";
+    //echo ($matches[0] . " ");
+
+
+    $counter++;
     
  
    
@@ -71,6 +85,8 @@ while ($row = $result->fetch_assoc()) {
 
   }
 
+  echo $arrn;
+ 
 
 /*$sql = "SELECT * from users WHERE fullname LIKE '$term' LIMIT 10";
 $result = $conn->query($sql);
@@ -117,6 +133,14 @@ else{
       array_push($arr8,$row['workingdays']);
       array_push($arr9,$row['RegistrationDate']);
       array_push($arr10,$row['month']);
+      array_push($arr11,$row['id']);
+      preg_match('/\d+/', $row['id'], $matches);
+      $arrn= $arrn. $matches[0] . " ";
+      //echo ($matches[0] . " ");
+  
+  
+      $counter++;
+      
       
       //echo $row['fullname'];
     }
@@ -199,6 +223,170 @@ while ($data = $result->fetch_assoc()) {
 
 }
 
+$purpose = '';
+$min = '';
+$max = '';
+$sex = '';
+$status = '';
+if(isset($_POST['filter']))
+{
+  $arr = array();$arr2 = array();$arr3 = array();$arr4 = array();$arr5 = array();$arr6 = array();
+  $arr7 = array();$arr8 = array();$arr9 = array();$arr10 = array();$arr11 = array();
+  $purpose = $_POST['purpose'];
+  $min = $_POST['min'];
+  $max = $_POST['max'];
+  $sex = $_POST['sex'];
+  $status = $_POST['status'];
+
+  if($status == 'Active')
+  {
+    $sq= "SELECT *
+    FROM users
+    JOIN plan ON users.id=plan.id
+   
+  ";  
+$res = $conn->query($sq);
+
+// if($row['age'] >= $min && $row['age'] <= $max && $row['purpose'] == $purpose && $row['sex'] == $sex  )
+if ($res->num_rows > 0) {
+
+  // output data of each row
+  while($row = $res->fetch_assoc()) {
+      if($row['age'] >= $min && $row['age'] <= $max  && $row['purpose'] == $purpose&& $row['gender'] == $sex)
+      {
+      
+        if($row['workingdays'] >3)
+        {
+          
+          array_push($arr,$row['fullname']);
+          array_push($arr2,$row['phone']);
+          array_push($arr3,$row['purpose']);
+          array_push($arr4,$row['age']);
+          array_push($arr5,$row['gender']);
+          array_push($arr6,$row['cash']);
+          array_push($arr7,$row['occupation']);
+          array_push($arr8,$row['workingdays']);
+          array_push($arr9,$row['RegistrationDate']);
+          array_push($arr10,$row['month']);
+          array_push($arr11,$row['id']);
+
+        }
+         
+      }
+  
+      }
+    }
+
+   
+
+   
+
+  }
+   ////////////////////////////////////////////////////
+
+   if($status == 'Expiring')
+   {
+     $sq= "SELECT *
+     FROM users
+     JOIN plan ON users.id=plan.id
+    
+   ";  
+ $res = $conn->query($sq);
+ 
+ // if($row['age'] >= $min && $row['age'] <= $max && $row['purpose'] == $purpose && $row['sex'] == $sex  )
+ if ($res->num_rows > 0) {
+ 
+   // output data of each row
+   while($row = $res->fetch_assoc()) {
+       if($row['age'] >= $min && $row['age'] <= $max  && $row['purpose'] == $purpose&& $row['gender'] == $sex)
+       {
+       
+         if($row['workingdays'] <3 && $row['workingdays'] >0  )
+         {
+           
+           array_push($arr,$row['fullname']);
+           array_push($arr2,$row['phone']);
+           array_push($arr3,$row['purpose']);
+           array_push($arr4,$row['age']);
+           array_push($arr5,$row['gender']);
+           array_push($arr6,$row['cash']);
+           array_push($arr7,$row['occupation']);
+           array_push($arr8,$row['workingdays']);
+           array_push($arr9,$row['RegistrationDate']);
+           array_push($arr10,$row['month']);
+           array_push($arr11,$row['id']);
+ 
+         }
+          
+       }
+   
+       }
+     }
+ 
+    
+ 
+    
+ 
+   }
+
+
+     ////////////////////////////////////////////////////
+
+     if($status == 'Inactive')
+     {
+       $sq= "SELECT *
+       FROM users
+       JOIN plan ON users.id=plan.id
+      
+     ";  
+   $res = $conn->query($sq);
+   
+   // if($row['age'] >= $min && $row['age'] <= $max && $row['purpose'] == $purpose && $row['sex'] == $sex  )
+   if ($res->num_rows > 0) {
+   
+     // output data of each row
+     while($row = $res->fetch_assoc()) {
+         if($row['age'] >= $min && $row['age'] <= $max  && $row['purpose'] == $purpose&& $row['gender'] == $sex)
+         {
+    
+           if($row['workingdays']==0  )
+           {
+             
+             array_push($arr,$row['fullname']);
+             array_push($arr2,$row['phone']);
+             array_push($arr3,$row['purpose']);
+             array_push($arr4,$row['age']);
+             array_push($arr5,$row['gender']);
+             array_push($arr6,$row['cash']);
+             array_push($arr7,$row['occupation']);
+             array_push($arr8,$row['workingdays']);
+             array_push($arr9,$row['RegistrationDate']);
+             array_push($arr10,$row['month']);
+             array_push($arr11,$row['id']);
+   
+           }
+            
+         }
+     
+         }
+       }
+   
+      
+   
+      
+   
+     }
+  
+
+ 
+
+
+ 
+ 
+
+
+}
+
 
 
 ?>
@@ -260,6 +448,8 @@ while ($data = $result->fetch_assoc()) {
           <button type="submit" onclick="clickme()" class="btn bg-white rounded-right" name="butt" style="border: 1px solid #ced4da; border-left: none; border-radius: .25rem;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
           </svg></button>
+     
+         
          
         </div>  
       </form>
@@ -270,9 +460,12 @@ while ($data = $result->fetch_assoc()) {
           </svg>
         </button>
 
+   
+
         <div id="filter" class="collapse">
-          
-          <form action="" class="mt-2" method="post">
+
+       
+         <!-- <form action="basic-data.php" class="mt-2"  method="get">
             <div class="form-group">
               <label for="sel1">Purpose</label>
               <select class="form-control" id="sel1">
@@ -302,11 +495,39 @@ while ($data = $result->fetch_assoc()) {
                 <option>Inactive</option>
               </select>
             </div>
-            <button type="submit" class="btn mb-2" style="color:#fff; background-color: #64549C; border-radius: 15px; height: 44px; width: 444px;">filter</button>
+            
+            <button type="submit" name="filter" class="btn mb-2" style="color:#fff; background-color: #64549C; border-radius: 15px; height: 44px; width: 444px;">filter</button>
+           
+          </form>-->
+
+            <form action="basic-data.php" class="mt-2"  method="post">
+              <select class="form-control" id="sel1" name="purpose">
+                <option value="Body bulider">Body bulider</option>
+                <option>Health care</option>
+                <option>Phsical</option>
+                <option>Body Weight</option>
+              </select>
+                <input type="number" class="form-control mr-2" placeholder="min" name="min">
+                <input type="number" class="form-control" name="max" id="" placeholder="max">
+          
+              <select class="form-control" id="sel1" name="sex">
+                <option value="M">M</option>
+                <option value="F">F</option>
+              </select>
+          
+              <select class="form-control" id="sel1" name="status">
+                <option>Active</option>
+                <option>Expiring</option>
+                <option>Inactive</option>
+              </select>
+       
+            
+            <button type="submit" name="filter" class="btn mb-2" style="color:#fff; background-color: #64549C; border-radius: 15px; height: 44px; width: 444px;">filter</button>
+           
           </form>
 
         </div>
-        
+     
       </div>
     </div>  
     <div class="col-2">
@@ -336,13 +557,13 @@ while ($data = $result->fetch_assoc()) {
       ///////////////////////////////
    
       /////////////////////////////
-      $l = count($arr);
+     $l = count($arr);
       if(isset( $_GET['search_term']))
       {
         $da =0;
        
 
-      for($i = 0 ; $i < $l ; $i++)
+      for($i = 0 ; $i < $l; $i++)
       {
         $date_start = $arr9[$i]; 
         $today = date("Y-m-d");
@@ -356,7 +577,9 @@ while ($data = $result->fetch_assoc()) {
 
       echo "<tr>";
       echo "<th scope='row'>$i</th>";
-      echo "<td>$arr[$i]</td>";
+      echo "<form id='$i'   name='myForm' method='post' action='popup.php?ID=" . urlencode($arr11[$i]) . "'>";
+      echo "<td id='$arr11[$i]'>$arr[$i]</td>";
+      echo "</form>";
       echo "<td>$arr2[$i]</td>";
       echo "<td>$arr3[$i]</td>";
       echo "<td>$arr4[$i]</td>";
@@ -423,7 +646,9 @@ while ($data = $result->fetch_assoc()) {
   
         echo "<tr>";
         echo "<th scope='row'>$i</th>";
-        echo "<td>$arr[$i]</td>";
+        echo "<form id='$i'   name='myForm' method='post' action='popup.php?ID=" . urlencode($arr11[$i]) . "'>";
+        echo "<td id='$arr11[$i]'>$arr[$i]</td>";
+        echo "</form>";
         echo "<td>$arr2[$i]</td>";
         echo "<td>$arr3[$i]</td>";
         echo "<td>$arr4[$i]</td>";
@@ -516,10 +741,15 @@ while ($data = $result->fetch_assoc()) {
 
       for($i = 0 ; $i < $l ; $i++)
       {
+        $x = 'f'. $i;
+        echo $x;
+        $y = 'a'.$i;
        
         echo "<tr>";
         echo "<th scope='row'>$i</th>";
-        echo "<td>$a1[$i]</td>";
+        echo "<form id='$x'   name='myForm' method='post' action='popup.php?ID=" . urlencode($a1[$i]) . "'>";
+        echo "<td id='$y'>$a1[$i]</td>";
+        echo "</form>";
         echo "<td>$a2[$i]</td>";
         echo "<td>$a3[$i]</td>";
         echo "<td>$a4[$i]</td>";
@@ -541,6 +771,10 @@ while ($data = $result->fetch_assoc()) {
   </table>
 </div>
 
+<div>
+
+
+</div>
 
 
 <script>
@@ -578,6 +812,54 @@ while ($data = $result->fetch_assoc()) {
 
   }
 
+  
+
+  const counter = "<?php echo $counter ?>";
+  const ids = "<?php echo $arrn ?>";
+  //window.alert(ids);
+  var arr = ids.split(' ');
+
+
+
+  for(let i = 1 ; i <= counter; i++)
+  {
+   var c = i-1;
+   var c1 = parseInt(arr[i-1]);
+    const myForm = document.getElementById(c);
+    const clickableBlock = document.getElementById('SS'+c1);
+   // window.alert('SS'+c1);
+  clickableBlock.addEventListener('click', function() {
+    //myForm.action = 'action.php';
+    myForm.submit();
+  });
+
+
+  }
+
+  ///////////////////////////////////////////////
+
+  const counter2 = "<?php echo $counter2 ?>";
+
+ // window.alert(counter2);
+
+
+
+  for(let j = 1 ; j <= counter2; j++)
+  {
+   var c = j-1;
+  
+    const myForm2 = document.getElementById('f'+c);
+    const clickableBlock2 = document.getElementById('a'+c);
+   //window.alert('f'+c);
+  clickableBlock2.addEventListener('click', function() {
+    //myForm.action = 'action.php';
+    myForm2.submit();
+  });
+
+
+  }
+  
+  
 </script>
 
 
