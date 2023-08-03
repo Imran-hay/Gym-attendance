@@ -40,9 +40,13 @@ else{
         
 
         echo '<p>Image uploaded successfully!</p>';
-        session_destroy();
-        header('Location:register.php');
+        unset($_SESSION['id']);
         
+        
+    }
+    if(isset($_POST['back']))
+    {
+        header('Location:qr-scan.php');
     }
     ?>
 
@@ -70,6 +74,10 @@ else{
         <input type="hidden" name="action" value="upload">
         <input type="hidden" name="image_data" id="image-data">
         <input type="submit" value="Upload">
+    </form>
+    <form method="post" action="image.php">
+       
+        <button name="back">Back to Home</button>
     </form>
 
     <script>
