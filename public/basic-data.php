@@ -1,4 +1,5 @@
 <?php  require_once "../Database/DB.php";
+require "./week.php";
 use function PHPSTORM_META\type;
 require "../libraries/vendor/autoload.php";
 
@@ -85,7 +86,7 @@ while ($row = $result->fetch_assoc()) {
 
   }
 
-  echo $arrn;
+ // echo $arrn;
  
 
 /*$sql = "SELECT * from users WHERE fullname LIKE '$term' LIMIT 10";
@@ -149,8 +150,10 @@ else{
   }
 
 }
+$af = false;
 if(isset($_POST['butt2']))
 {
+  $af = true;
   
 $date = $_POST['date'];
 //echo  $_POST['date'];
@@ -201,9 +204,11 @@ $writer->save($path);
 }
 
 else{
-  $sql = "SELECT * FROM  table_attendance";
+  /*$sql = "SELECT * FROM  table_attendance";
 $result = mysqli_query($conn, $sql);
 $date = date('Y-m-d');
+
+
 
 
 // Write the data to the spreadsheet
@@ -219,9 +224,230 @@ while ($data = $result->fetch_assoc()) {
     }
 
     }
+*/
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+$st = $start;
+$dx = date("Y-m-30");
+
+$dates = array();
+$sql = "SELECT * FROM  table_attendance where LOGDATE='$dx'";
+$result = mysqli_query($conn, $sql);
+
+$d1 = array();$d2 = array();$d3 = array();$d4 = array();$d5 = array();$d6 = array();$d7 = array();
+$i = 1;
+
+
+
+
+
+echo "start:" .$st;
+while ($data = $result->fetch_assoc()) {
+  $fd = date('Y-m-d', strtotime($st));
+echo "<br>";
+  //echo "current date" . $fd . "<br>";
+
+
+ 
+    //echo "st:". $st;
+  
+   // array_push($dates,$st);
+
+  //  echo "LOGDATE" .$data['LOGDATE'] . "<br>";
+   // if($data['LOGDATE'] == $fd)
+   // {
+     array_push($d1,array($data['ID'],$data['ATTENDANT_NAME'],$data['TIMEIN'],$data['TIMEOUT']));
+     
+     echo "<br> check";
+     echo $data['LOGDATE'];
+     //break;
+      
+    //}
+
+   // if($i <= 7)
+   // {
+      $interval = "1". " " . "day"; 
+      $ds = new DateTime($st);
+       $ds->modify('+' . $interval);
+    // $ds->add(new DateInterval('P1D'));
+       $new_date = $ds->format('Y-m-d');
+       $nd = date('Y-m-d', strtotime($new_date));
+       //echo "incremented date:" . $nd . "<br>";
+       $fd = $nd;
+
+   // }
+    
+   
+
+       $i++;
+      
+
+
+  
+
+
+ 
+
+  }*/
+
+  ////////////////////////////////////////////////////////////////////////////////////
+  $dates = array();
+  $d1 = array();$d2 = array();$d3 = array();$d4 = array();$d5 = array();$d6 = array();$d7 = array();
+  $st =$start;
+  $fd = date('Y-m-d', strtotime($st));
+  $stmt = $conn->prepare("SELECT * FROM table_attendance WHERE LOGDATE = ?");
+
+// Bind the parameter to the placeholder
+
+array_push($dates,$fd);
+
+$value = $fd;
+$stmt->bind_param("s", $value);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($data = $result->fetch_assoc()) {
+   
+    array_push($d1,array($data['ID'],$data['ATTENDANT_NAME'],$data['TIMEIN'],$data['TIMEOUT'],$data['LOGDATE']));
+}
+$ds = new DateTime($st);
+// $ds->modify('+' . $interval);
+$ds->add(new DateInterval('P1D'));
+ $new_date = $ds->format('Y-m-d');
+ $nd = date('Y-m-d', strtotime($new_date));
+//echo "<br>";
+ //echo "incremented date" . $nd;
+ array_push($dates,$nd);
+
+ $value2 = $nd;
+$stmt->bind_param("s", $value2);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($data = $result->fetch_assoc()) {
+  array_push($d2,array($data['ID'],$data['ATTENDANT_NAME'],$data['TIMEIN'],$data['TIMEOUT'],$data['LOGDATE']));
+}
+$ds = new DateTime($st);
+// $ds->modify('+' . $interval);
+$ds->add(new DateInterval('P2D'));
+ $new_date = $ds->format('Y-m-d');
+ $nd = date('Y-m-d', strtotime($new_date));
+//echo "<br>";
+ //echo "incremented date" . $nd;
+ array_push($dates,$nd);
+
+
+ $value3 = $nd;
+$stmt->bind_param("s", $value3);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($data = $result->fetch_assoc()) {
+  array_push($d3,array($data['ID'],$data['ATTENDANT_NAME'],$data['TIMEIN'],$data['TIMEOUT'],$data['LOGDATE']));
+}
+$ds = new DateTime($st);
+// $ds->modify('+' . $interval);
+$ds->add(new DateInterval('P3D'));
+ $new_date = $ds->format('Y-m-d');
+ $nd = date('Y-m-d', strtotime($new_date));
+//echo "<br>";
+ //echo "incremented date" . $nd;
+ array_push($dates,$nd);
+
+
+ $value4 = $nd;
+$stmt->bind_param("s", $value4);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($data = $result->fetch_assoc()) {
+  array_push($d4,array($data['ID'],$data['ATTENDANT_NAME'],$data['TIMEIN'],$data['TIMEOUT'],$data['LOGDATE']));
+}
+$ds = new DateTime($st);
+// $ds->modify('+' . $interval);
+$ds->add(new DateInterval('P4D'));
+ $new_date = $ds->format('Y-m-d');
+ $nd = date('Y-m-d', strtotime($new_date));
+//echo "<br>";
+ //echo "incremented date" . $nd;
+ array_push($dates,$nd);
+
+
+ $value5 = $nd;
+$stmt->bind_param("s", $value5);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($data = $result->fetch_assoc()) {
+  array_push($d5,array($data['ID'],$data['ATTENDANT_NAME'],$data['TIMEIN'],$data['TIMEOUT'],$data['LOGDATE']));
+}
+$ds = new DateTime($st);
+// $ds->modify('+' . $interval);
+$ds->add(new DateInterval('P5D'));
+ $new_date = $ds->format('Y-m-d');
+ $nd = date('Y-m-d', strtotime($new_date));
+//echo "<br>";
+ //echo "incremented date" . $nd;
+ array_push($dates,$nd);
+
+
+ $value6 = $nd;
+$stmt->bind_param("s", $value6);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($data = $result->fetch_assoc()) {
+  array_push($d6,array($data['ID'],$data['ATTENDANT_NAME'],$data['TIMEIN'],$data['TIMEOUT'],$data['LOGDATE']));
+}
+$ds = new DateTime($st);
+// $ds->modify('+' . $interval);
+$ds->add(new DateInterval('P6D'));
+ $new_date = $ds->format('Y-m-d');
+ $nd = date('Y-m-d', strtotime($new_date));
+//echo "<br>";
+ //echo "incremented date" . $nd;
+ array_push($dates,$nd);
+
+ $value7 = $nd;
+ $stmt->bind_param("s", $value7);
+ $stmt->execute();
+ $result = $stmt->get_result();
+ while ($data = $result->fetch_assoc()) {
+   array_push($d7,array($data['ID'],$data['ATTENDANT_NAME'],$data['TIMEIN'],$data['TIMEOUT'],$data['LOGDATE']));
+ }
+
+
 
 
 }
+
+if(isset($_POST['printw']))
+{
+  $spreadsheet = new Spreadsheet();
+$sheet = $spreadsheet->getActiveSheet();
+
+// Write the headers to the spreadsheet
+$headers = array('ID', 'Name', 'TimeIN', 'TimeOut','LOGDATE');
+$sheet->fromArray($headers, NULL, 'A1');
+  $row2 = 2;
+  $week = array_merge($d1,$d2,$d3,$d4,$d5,$d6,$d7);
+  for($i = 0 ; $i < count($week) ; $i++)
+  {
+    $sheet->setCellValue('A'.$row2, (string) $week[$i][0]); 
+        $sheet->setCellValue('B'.$row2, (string) $week[$i][1]); 
+        $sheet->setCellValue('C'.$row2, (string) $week[$i][2]); 
+        $sheet->setCellValue('D'.$row2, (string) $week[$i][3]); 
+        $sheet->setCellValue('E'.$row2, (string) $week[$i][4]); 
+        $row2++;
+
+}
+$writer = new Csv($spreadsheet);
+$writer->setDelimiter(',');
+$writer->setEnclosure('"');
+$writer->setLineEnding("\r\n");
+$writer->setSheetIndex(0);
+//$writer->save("$date" . ".csv");
+$weekn = $dates[0]. "_" . end($dates);
+$path = "../Attendance/" . $weekn . ".csv";
+$writer->save($path);
+}
+
+
+
 
 $purpose = '';
 $min = '';
@@ -389,6 +615,7 @@ if ($res->num_rows > 0) {
 
 $month = '';
 $year = '';
+$a5 = array();
 
 if(isset($_POST['butt3']))
 {
@@ -423,6 +650,7 @@ while ($data = $result->fetch_assoc()) {
         $sheet->setCellValue('B'.$row, $data['ATTENDANT_NAME']); array_push($a2,$data['ATTENDANT_NAME']);
         $sheet->setCellValue('C'.$row, $data['TIMEIN']); array_push($a3,$data['TIMEIN']);
         $sheet->setCellValue('d'.$row, $data['TIMEOUT']); array_push($a4,$data['TIMEOUT']);
+        $sheet->setCellValue('e'.$row, $data['LOGDATE']); array_push($a5,$data['LOGDATE']);
         $row++;
     }
 
@@ -480,8 +708,11 @@ $writer->save($path);
                 <li class="nav-item mr-4">
                   <a class="nav-link text-dark" href="qr-scan.php">QR Scan</a>
                 </li>
-                <li class="nav-item border-bottom border-dark">
+                <li class="nav-item border-bottom border-dark mr-4">
                   <a class="nav-link text-dark" href="basic-data.php">Basic Data</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-dark" href="report.php">Report</a>
                 </li>
               </ul>
               <form class="form-inline my-2 my-lg-0">
@@ -689,13 +920,13 @@ $writer->save($path);
       }
     }
     else{
-      for($i = 0 ; $i < $l ; $i++)
+      for($i = 0 ; $i < $l-1 ; $i++)
       {
         $da =0;
        
 
-        for($i = 0 ; $i < $l ; $i++)
-        {
+        //for($i = 1 ; $i < $l ; $i++)
+       // {
           $date_start = $arr9[$i]; 
           $today = date("Y-m-d");
           $interval = "$arr10[$i]". " " . "month"; 
@@ -755,7 +986,7 @@ $writer->save($path);
       echo "</tr>";
   
   
-        }
+        
 
       }
     }
@@ -799,25 +1030,38 @@ $writer->save($path);
     
     </div>
   </div>  
-  <table class="table table table-striped table-light">
-
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">ID</th>
-        <th scope="col">Name</th>
-        <th scope="col">Time Entered</th>
-        <th scope="col">Time exited</th>
-      </tr>
-    </thead>
-    <tbody>
+  
       <?php
       $l = count($a1);
 
+     
+
+     
+     
+   
+
+      if($af == true)
+      {
+        echo "<table class='table table table-striped table-light'>";
+
+    echo "<thead>";
+      echo "<tr>";
+        echo "<th scope='col'>#</th>";
+        echo "<th scope='col'>ID</th>";
+        echo "<th scope='col'>NAME</th>";
+        echo "<th scope='col'>TIME ENTERED</th>";
+        echo "<th scope='col'>TIME EXITED</th>";
+      echo "</tr>";
+    echo "</thead>";
+    echo "<tbody>";
+
+    
+
+   
       for($i = 0 ; $i < $l ; $i++)
       {
         $x = 'f'. $i;
-        echo $x;
+       // echo $x;
         $y = 'a'.$i;
        
         echo "<tr>";
@@ -831,8 +1075,246 @@ $writer->save($path);
         echo "</tr>";
 
       }
-   
+
+    }
+
+    else{
+      for($k = 0 ; $k < count($dates); $k++)
+      {
+        if($dates[$k] == date('Y-m-d'))
+        {
+          $dates[$k] = "Today";
+          if($k != 0)
+          {
+            $dates[$k-1] = "Yesterday";
+
+          }
+        }
+      }
+      echo "<h1>This weeks attendance</h1>";
+      echo "<h1>$dates[0]</h1>";
+      echo "<br>";
+    
+      echo "<table class='table table table-striped table-light'>";
+      echo "<thead>";
+        echo "<tr>";
+          echo "<th scope='col'>#</th>";
+          echo "<th scope='col'>ID</th>";
+          echo "<th scope='col'>NAME</th>";
+          echo "<th scope='col'>TIME ENTERED</th>";
+          echo "<th scope='col'>TIME EXITED</th>";
+          echo "<th scope='col'>LOG DATE</th>";
+        echo "</tr>";
+      echo "</thead>";
+      echo "<tbody>";
+      for($i = 0 ; $i < count($d1) ; $i++)
+      {
+          echo "<tr>";
+          echo "<th scope='row'>$i</th>";
+          echo "<td>" . (string) $d1[$i][0] . "</td>";
+          echo "<td>" . (string) $d1[$i][1] . "</td>";
+          echo "<td>" . (string) $d1[$i][2] . "</td>";
+          echo "<td>" . (string) $d1[$i][3] . "</td>";
+          echo "<td>" . (string) $d1[$i][4] . "</td>";
+          echo "</tr>";
+      }
+      echo "</tbody>";
+      echo "</table>";
+      ///////////////////////////////////////////////////////////////////////////////////
+
+      echo "<h1>$dates[1]</h1>";
+      echo "<br>";
+    echo "<table class='table table table-striped table-light'>";
+      echo "<thead>";
+        echo "<tr>";
+          echo "<th scope='col'>#</th>";
+          echo "<th scope='col'>ID</th>";
+          echo "<th scope='col'>NAME</th>";
+          echo "<th scope='col'>TIME ENTERED</th>";
+          echo "<th scope='col'>TIME EXITED</th>";
+          echo "<th scope='col'>LOG DATE</th>";
+        echo "</tr>";
+      echo "</thead>";
+      echo "<tbody>";
+      for($i = 0 ; $i < count($d2) ; $i++)
+      {
+          echo "<tr>";
+          echo "<th scope='row'>$i</th>";
+          echo "<td>" . (string) $d2[$i][0] . "</td>";
+          echo "<td>" . (string) $d2[$i][1] . "</td>";
+          echo "<td>" . (string) $d2[$i][2] . "</td>";
+          echo "<td>" . (string) $d2[$i][3] . "</td>";
+          echo "<td>" . (string) $d2[$i][4] . "</td>";
+          echo "</tr>";
+      }
+      echo "</tbody>";
+      echo "</table>";
+      ///////////////////////////////////////////////////////////////////////////////////
+
       
+      echo "<h1>$dates[2]</h1>";
+      echo "<br>";
+    echo "<table class='table table table-striped table-light'>";
+      echo "<thead>";
+        echo "<tr>";
+          echo "<th scope='col'>#</th>";
+          echo "<th scope='col'>ID</th>";
+          echo "<th scope='col'>NAME</th>";
+          echo "<th scope='col'>TIME ENTERED</th>";
+          echo "<th scope='col'>TIME EXITED</th>";
+          echo "<th scope='col'>LOG DATE</th>";
+        echo "</tr>";
+      echo "</thead>";
+      echo "<tbody>";
+      for($i = 0 ; $i < count($d3) ; $i++)
+      {
+          echo "<tr>";
+          echo "<th scope='row'>$i</th>";
+          echo "<td>" . (string) $d3[$i][0] . "</td>";
+          echo "<td>" . (string) $d3[$i][1] . "</td>";
+          echo "<td>" . (string) $d3[$i][2] . "</td>";
+          echo "<td>" . (string) $d3[$i][3] . "</td>";
+          echo "<td>" . (string) $d3[$i][4] . "</td>";
+          echo "</tr>";
+      }
+      echo "</tbody>";
+      echo "</table>";
+      ///////////////////////////////////////////////////////////////////////////////////
+     
+
+      echo "<h1>$dates[3]</h1>";
+      echo "<br>";
+    echo "<table class='table table table-striped table-light'>";
+      echo "<thead>";
+        echo "<tr>";
+          echo "<th scope='col'>#</th>";
+          echo "<th scope='col'>ID</th>";
+          echo "<th scope='col'>NAME</th>";
+          echo "<th scope='col'>TIME ENTERED</th>";
+          echo "<th scope='col'>TIME EXITED</th>";
+          echo "<th scope='col'>LOG DATE</th>";
+        echo "</tr>";
+      echo "</thead>";
+      echo "<tbody>";
+      for($i = 0 ; $i < count($d4) ; $i++)
+      {
+          echo "<tr>";
+          echo "<th scope='row'>$i</th>";
+          echo "<td>" . (string) $d4[$i][0] . "</td>";
+          echo "<td>" . (string) $d4[$i][1] . "</td>";
+          echo "<td>" . (string) $d4[$i][2] . "</td>";
+          echo "<td>" . (string) $d4[$i][3] . "</td>";
+          echo "<td>" . (string) $d4[$i][4] . "</td>";
+          echo "</tr>";
+      }
+      echo "</tbody>";
+      echo "</table>";
+      ///////////////////////////////////////////////////////////////////////////////////
+
+      echo "<h1>$dates[4]</h1>";
+      echo "<br>";
+    echo "<table class='table table table-striped table-light'>";
+      echo "<thead>";
+        echo "<tr>";
+          echo "<th scope='col'>#</th>";
+          echo "<th scope='col'>ID</th>";
+          echo "<th scope='col'>NAME</th>";
+          echo "<th scope='col'>TIME ENTERED</th>";
+          echo "<th scope='col'>TIME EXITED</th>";
+          echo "<th scope='col'>LOG DATE</th>";
+        echo "</tr>";
+      echo "</thead>";
+      echo "<tbody>";
+      for($i = 0 ; $i < count($d5) ; $i++)
+      {
+          echo "<tr>";
+          echo "<th scope='row'>$i</th>";
+          echo "<td>" . (string) $d5[$i][0] . "</td>";
+          echo "<td>" . (string) $d5[$i][1] . "</td>";
+          echo "<td>" . (string) $d5[$i][2] . "</td>";
+          echo "<td>" . (string) $d5[$i][3] . "</td>";
+          echo "<td>" . (string) $d5[$i][4] . "</td>";
+          echo "</tr>";
+      }
+      echo "</tbody>";
+      echo "</table>";
+      ///////////////////////////////////////////////////////////////////////////////////
+     
+      echo "<h1>$dates[5]</h1>";
+      echo "<br>";
+    echo "<table class='table table table-striped table-light'>";
+      echo "<thead>";
+        echo "<tr>";
+          echo "<th scope='col'>#</th>";
+          echo "<th scope='col'>ID</th>";
+          echo "<th scope='col'>NAME</th>";
+          echo "<th scope='col'>TIME ENTERED</th>";
+          echo "<th scope='col'>TIME EXITED</th>";
+          echo "<th scope='col'>LOG DATE</th>";
+        echo "</tr>";
+      echo "</thead>";
+      echo "<tbody>";
+      for($i = 0 ; $i < count($d6) ; $i++)
+      {
+          echo "<tr>";
+          echo "<th scope='row'>$i</th>";
+          echo "<td>" . (string) $d6[$i][0] . "</td>";
+          echo "<td>" . (string) $d6[$i][1] . "</td>";
+          echo "<td>" . (string) $d6[$i][2] . "</td>";
+          echo "<td>" . (string) $d6[$i][3] . "</td>";
+          echo "<td>" . (string) $d6[$i][4] . "</td>";
+          echo "</tr>";
+      }
+      echo "</tbody>";
+      echo "</table>";
+      ///////////////////////////////////////////////////////////////////////////////////
+
+      echo "<h1>$dates[6]</h1>";
+      echo "<br>";
+    echo "<table class='table table table-striped table-light'>";
+      echo "<thead>";
+        echo "<tr>";
+          echo "<th scope='col'>#</th>";
+          echo "<th scope='col'>ID</th>";
+          echo "<th scope='col'>NAME</th>";
+          echo "<th scope='col'>TIME ENTERED</th>";
+          echo "<th scope='col'>TIME EXITED</th>";
+          echo "<th scope='col'>LOG DATE</th>";
+        echo "</tr>";
+      echo "</thead>";
+      echo "<tbody>";
+      for($i = 0 ; $i < count($d7) ; $i++)
+      {
+          echo "<tr>";
+          echo "<th scope='row'>$i</th>";
+          echo "<td>" . (string) $d7[$i][0] . "</td>";
+          echo "<td>" . (string) $d7[$i][1] . "</td>";
+          echo "<td>" . (string) $d7[$i][2] . "</td>";
+          echo "<td>" . (string) $d7[$i][3] . "</td>";
+          echo "<td>" . (string) $d7[$i][4] . "</td>";
+          echo "</tr>";
+      }
+      echo "</tbody>";
+      echo "</table>";
+      ///////////////////////////////////////////////////////////////////////////////////
+     
+     
+     
+     echo "<form method='post' action='basic-data.php'>";
+      echo "<button name='printw' >Print attendance</button>";
+      echo "</form>";
+     
+     
+
+    
+     
+    }
+
+    
+
+    
+   
+    
 
       ?>
      

@@ -1,5 +1,6 @@
 <?php  require_once "../Database/DB.php";
 include '../libraries/phpqrcode/qrlib.php';
+session_start();
 /*if(!isset($_SESSION['user'])) 
 {
     die('not allowd');
@@ -7,6 +8,7 @@ include '../libraries/phpqrcode/qrlib.php';
 
 
 $output = "";
+$p = false;
 $sql = "SELECT COUNT(*) as count FROM users";
 $result = mysqli_query($conn, $sql);
 if (!$result) {
@@ -41,60 +43,126 @@ if(isset($_POST['butt']))
     $month = $_POST['month'];
     $fullname = $fname . " " . $lname;
 
+    $_SESSION['id'] = $id;
+
+    $file_name = $_FILES['file']['name'];
+    $file_type = $_FILES['file']['type'];
+    $file_size = $_FILES['file']['size'];
+    $file_tmp_name = $_FILES['file']['tmp_name'];
+    $file_error = $_FILES['file']['error'];
+
+    $escaped_name = $conn->real_escape_string($file_name);
+$escaped_type = $conn->real_escape_string($file_type);
+$escaped_size = $conn->real_escape_string($file_size);
+
+if ($file_error !== UPLOAD_ERR_OK) {
+    die("Upload failed with error code $file_error");
+}
+$max_file_size = 2 * 1024 * 1024; // 2MB in bytes
+if ($file_size > $max_file_size) {
+    die("File size is too large. Maximum file size is 2MB.");
+}
+
+
    // enter data to the users
 
-   $sql2 = "INSERT INTO users 
+   $sql2 = "INSERT INTO users (id,fullname,age,gender,purpose,occupation,phone)
 VALUES ('$id', '$fullname','$age','$gender','$purpose', '$occupation', '$phone')";
 
 if ($conn->query($sql2) === TRUE) {
-  //echo "New record created successfully";
-} else {
-  echo "Error: " . $sql2 . "<br>" . $conn->error;
+  
+
+    $dir_path = "../Recepits/$id";
+
+    // Check if the directory already exists
+    if (!file_exists($dir_path)) {
+        // Create the directory with read, write, and execute permissions for the owner
+        mkdir($dir_path, 0700);
+       //echo "Directory created successfully!";
+    } else {
+       //echo "Directory already exists!";
+    }
+
+
+   $upload_dir = "../Recepits/$id/";
+$file_name2 = $fname."-" . $lname . "_" . date("Y-m-d");
+$upload_path = $upload_dir . $file_name;
+
+if (file_exists($upload_path)) {
+    die("File already exists. Please choose a different filename.");
 }
+if (move_uploaded_file($file_tmp_name, $upload_path)) {
+    //echo "File saved locally and uploaded to database!";
+} else {
+    //echo "Failed to save file locally!";
+}
+
+$file_contents = file_get_contents($upload_path);
+$file_contents = mysqli_real_escape_string($conn, $file_contents);
+
+
+
+////////////////////////////////////////////
 
 
    //insert to plan
    $today = date('Y-m-d');
    $sql3 = "INSERT INTO plan 
-   VALUES ('$cash', '$wd', '$month', '$id', '$today')";
+   VALUES ('$cash', '$wd', '$month', '$id', '$today',1,'$file_contents')";
    
    if ($conn->query($sql3) === TRUE) {
-     //echo "New record created successfully";
+    
+   $data = $id;
+
+   // The file path to save the QR code image
+   $filename = "../Images/qrcodes/$id.png";
+   
+   // Generate the QR code image
+   QRcode::png($data, $filename);
+   
+   $output = "user created successfully <br> their id is $id. <br> Qrcode is saved in Images folder";
+   
+   // Output the QR code image to the browser
+   //header('Content-Type: image/png');
+   //readfile($filename);
+   
+   $image_data = file_get_contents("../Images/qrcodes/$id.png");
+   
+   // Escape special characters in the image data
+   $image_data = mysqli_real_escape_string($conn, $image_data);
+   
+   $sql4 = "INSERT INTO qrcode 
+   VALUES ('$image_data', '$id')";
+   
+   if ($conn->query($sql4) === TRUE) {
+    $output = "user created successfully <br> their id is $id. <br> Qrcode is saved in Images folder";
+   
+   } else {
+     echo "Error: " . $sql4 . "<br>" . $conn->error;
+   }
+    
+  
+
    } else {
      echo "Error: " . $sql3 . "<br>" . $conn->error;
    }
 
-
-   $data = $id;
-
-// The file path to save the QR code image
-$filename = "../Images/qrcodes/$id.png";
-
-// Generate the QR code image
-QRcode::png($data, $filename);
-
-$output = "user created successfully <br> their id is $id. <br> Qrcode is saved in Images folder";
-
-// Output the QR code image to the browser
-//header('Content-Type: image/png');
-//readfile($filename);
-
-$image_data = file_get_contents("../Images/qrcodes/$id.png");
-
-// Escape special characters in the image data
-$image_data = mysqli_real_escape_string($conn, $image_data);
-
-$sql4 = "INSERT INTO qrcode 
-VALUES ('$image_data', '$id')";
-
-if ($conn->query($sql4) === TRUE) {
-  //echo "New record created successfully";
+  
 } else {
-  echo "Error: " . $sql4 . "<br>" . $conn->error;
+  echo "Error: " . $sql2 . "<br>" . $conn->error;
+}
+//////////////////////////////////////////////
+
+
+
+
+
+
 }
 
-
-
+if(isset($_POST['bu']))
+{
+    $p = true;
 }
 
 
@@ -134,8 +202,11 @@ if ($conn->query($sql4) === TRUE) {
                 <li class="nav-item mr-4">
                   <a class="nav-link text-dark" href="qr-scan.php">QR Scan</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item mr-4">
                   <a class="nav-link text-dark" href="basic-data.php">Basic Data</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-dark" href="report.php">Report</a>
                 </li>
               </ul>
               <form class="form-inline my-2 my-lg-0">
@@ -148,16 +219,41 @@ if ($conn->query($sql4) === TRUE) {
 
     <div class="container mt-5">
         <div class="row justify-content-between">
-            <div class="col-5">
-                <img src="../Images/register.png" style=" width:100%; height: auto;" alt="" srcset="">
-            </div>
+            <?php
+            if($p ==false)
+            {
+                echo "<div class='col-5'>";
+                echo "<img src='../Images/register.png' style='width:100%; height:auto;' alt='' srcset=''>";
+            echo "</div>";
+
+            }
+            else{
+                echo "<h1>Camera Capture</h1>";
+                echo "<video id='video' width='100%' height='auto'></video>";
+                echo "<br>";
+                echo "<button id='capture-btn'>Capture</button>";
+                echo "<br>";
+                echo "<canvas id='canvas'></canvas>";
+                echo "<br>";
+                echo "<img id='preview'>";
+                echo "<br>";
+                echo "<form method='post' enctype='multipart/form-data'>";
+                    echo "<input type='hidden' name='action' value='upload'>";
+                    echo "<input type='hidden' name='image_data' id='image-data'>";
+                    echo "<input type='submit' value='Upload;>";
+                echo "</form>";
+               
+
+            }
+        
+            ?>
             <div class="col-6">
                 <div class="row">
                     <div class="col-6">
                         <h2>registeration</h2>
                     </div>
                 </div>    
-                   <form method="post" action="register.php">
+                   <form method="post" action="register.php" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
@@ -247,6 +343,15 @@ if ($conn->query($sql4) === TRUE) {
                             <label class="text-center" for="exampleInputEmail1">Month</label>
                         </div>
                    </div> 
+
+                   <div class="col-5">
+                        <div class="form-group d-flex flex-column justify-content-center">
+                            <input type="file" class="form-control" style="width: 240px;" id="file" name="file"  aria-describedby="emailHelp">
+                            <label class="text-center" for="exampleInputEmail1">Recepit</label>
+                        </div>
+                   </div> 
+
+                 
                         </div>
                        
                         <div class="row justify-content-center">
@@ -257,9 +362,19 @@ if ($conn->query($sql4) === TRUE) {
                         <h3 style="color: #64549C;" ><?php echo $output ?></h3>
                         
                     </form>
+
+                    <form method="POST" action="image.php">
+                        <button name="bu">Take A Picture</button>
+
+                    </form>
+
+        
             </div>
         </div>
     </div>
+ 
+
+   
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

@@ -4,8 +4,8 @@ include '../libraries/phpqrcode/qrlib.php';
 {
     die('not allowd');
 }*/
-
-$id="ss001";
+session_start();
+$id = $_SESSION["ID"];
 
 $sql="SELECT * FROM users WHERE id='$id'";
 
@@ -27,7 +27,7 @@ if (mysqli_num_rows($result) > 0) {
 
 }
 
-if(isset($_POST['submit'])){
+if(isset($_POST['edit'])){
 
     if(isset($_POST['name'])){
 
@@ -38,7 +38,7 @@ if(isset($_POST['submit'])){
             $sql = "UPDATE users SET fullname='$newname' WHERE id='$id'";
 
             if (mysqli_query($conn, $sql)) {
-              echo "New record created successfully";
+              header('location:edit.php');
             } else {
               echo "Error: " . $sql . "<br>" . mysqli_error($conn);
             }
@@ -54,7 +54,7 @@ if(isset($_POST['submit'])){
             $sql = "UPDATE users SET age='$newage' WHERE id='$id'";
 
             if (mysqli_query($conn, $sql)) {
-              echo "New record created successfully";
+                header('location:edit.php');
             } else {
               echo "Error: " . $sql . "<br>" . mysqli_error($conn);
             }
@@ -69,7 +69,7 @@ if(isset($_POST['submit'])){
             $sql = "UPDATE users SET purpose='$newpurpose' WHERE id='$id'";
 
             if (mysqli_query($conn, $sql)) {
-              echo "New record created successfully";
+                header('location:edit.php');
             } else {
               echo "Error: " . $sql . "<br>" . mysqli_error($conn);
             }
@@ -85,7 +85,7 @@ if(isset($_POST['submit'])){
             $sql = "UPDATE users SET phone='$newphone' WHERE id='$id'";
 
             if (mysqli_query($conn, $sql)) {
-              echo "New record created successfully";
+                header('location:edit.php');
             } else {
               echo "Error: " . $sql . "<br>" . mysqli_error($conn);
             }
@@ -101,7 +101,7 @@ if(isset($_POST['submit'])){
             $sql = "UPDATE users SET occupation='$newoccupation' WHERE id='$id'";
 
             if (mysqli_query($conn, $sql)) {
-              echo "New record created successfully";
+                header('location:edit.php');
             } else {
               echo "Error: " . $sql . "<br>" . mysqli_error($conn);
             }
@@ -117,7 +117,7 @@ if(isset($_POST['submit'])){
             $sql = "UPDATE users SET gender='$newgender' WHERE id='$id'";
 
             if (mysqli_query($conn, $sql)) {
-              echo "New record created successfully";
+                header('location:edit.php');
             } else {
               echo "Error: " . $sql . "<br>" . mysqli_error($conn);
             }
@@ -274,7 +274,7 @@ $month = ""; */
                         </div>
                         <div class="row justify-content-center">
                             <div class="col-6">
-                                <button type="submit" name="butt" class="btn w-100" style="color:#fff; background-color: #64549C; border-radius: 15px; height: 44px; width: 444px;">Save Change</button>
+                                <button type="submit" name="edit" class="btn w-100" style="color:#fff; background-color: #64549C; border-radius: 15px; height: 44px; width: 444px;">Save Change</button>
                             </div>
                         </div>
                         
