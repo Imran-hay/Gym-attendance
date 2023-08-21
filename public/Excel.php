@@ -18,7 +18,7 @@ if(isset($_POST['butt']))
 {
   
 $date = $_POST['date'];
-echo  $_POST['date'];
+//echo  $_POST['date'];
 $ds = strval($date);
 $cDate = date('Y-m-d', strtotime($date));
 $spreadsheet = new Spreadsheet();

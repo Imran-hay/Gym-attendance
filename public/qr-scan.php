@@ -37,12 +37,11 @@
     ///////////////////////////////////////////////////////////
     $date_start = $rd; 
     $today = date("Y-m-d");
-
     $interval = "$month". " " . "month"; 
     $dt = new DateTime($date_start);
     $dt->modify('+' . $interval);
     $new_date = $dt->format('Y-m-d');
-    echo $new_date; // Output: 2023-08-20
+    //echo $new_date; // Output: 2023-08-20
     ///////////////////////////////////////////////////////
     if($days == 0)
     {
@@ -56,17 +55,23 @@
     }
 
     ///////////////////////////////////////////////////////////
+  
     else{
 
-   
+     
     $date = date('Y-m-d');
     $time = date('h:i:sa');
     $sql2 = "SELECT * FROM table_attendance WHERE ID='$id' AND LOGDATE='$date' AND STATUS='0'";
     $query2 = $conn->query($sql2);
     if($query2->num_rows>0){
+      $udate = $days;
+     // $udate = $udate -1;
+      $message = $udate;
         
         $sql3 = "UPDATE table_attendance SET TIMEOUT=NOW(), STATUS='1' WHERE ID='$id' AND LOGDATE='$date'";
         $query3 = $conn->query($sql3);
+       
+       
         ////
         $sql31 = "INSERT INTO recent 
         VALUES ('$id')";
@@ -84,13 +89,16 @@ if ($conn->query($sql31) === TRUE) {
         if($conn->query($sq4) ===TRUE){
           $sql41 = "INSERT INTO recent 
           VALUES ('$id')";
+           $days = $days-1;
+           
   
   if ($conn->query($sql41) === TRUE) {
-    $days = $days-1;
+ 
     $sql411 = "UPDATE plan SET workingdays=$days WHERE id = '$id'";
 
 if ($conn->query($sql411) === TRUE) {
   //echo "Record updated successfully";
+  $message = $days;
 } else {
   //echo "Error updating record" . $conn->error;
 }

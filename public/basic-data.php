@@ -1,3 +1,209 @@
+<?php  require_once "../Database/DB.php";
+use function PHPSTORM_META\type;
+require "../libraries/vendor/autoload.php";
+
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
+
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+
+
+
+$term = '';
+$results = '';
+$arr = array();$arr2 = array();$arr3 = array();$arr4 = array();$arr5 = array();$arr6 = array();$arr7 = array();
+$arr8 = array();$arr9 = array(); $arr10 = array();
+
+$a1 = array();
+$a2 = array();
+$a3 = array();
+$a4 = array();
+$a5 = array();
+if(isset( $_GET['search_term']))
+{
+    $term = $_GET['search_term'];
+   // echo "<h1>$term</h1>";
+
+    $search_term = filter_input(INPUT_GET, "$term", FILTER_SANITIZE_STRING);
+
+// Create a new mysqli object and connect to the database
+
+
+// Prepare the SQL statement using a prepared statement
+//$stmt = $conn->prepare('SELECT * from users WHERE fullname LIKE ? LIMIT 10');
+
+/*$stmt = $conn->prepare("SELECT users.fullname, users.phone,users.purpose,
+users.age,users.gender,users.occupation,plan.cash,plan.workingdays,plan.RegistrationDate
+FROM users
+JOIN plan ON users.id=plan.id
+WHERE users.fullname LIKE ? LIMIT 10
+
+");*/
+
+$stmt = $conn->prepare("SELECT *
+FROM users
+JOIN plan ON users.id=plan.id
+WHERE users.fullname LIKE ? LIMIT 10
+
+");
+$term = "%$term%"; // Add the percent signs to the search term
+$stmt->bind_param('s', $term);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    array_push($arr,$row['fullname']);
+    array_push($arr2,$row['phone']);
+    array_push($arr3,$row['purpose']);
+    array_push($arr4,$row['age']);
+    array_push($arr5,$row['gender']);
+    array_push($arr6,$row['cash']);
+    array_push($arr7,$row['occupation']);
+    array_push($arr8,$row['workingdays']);
+    array_push($arr9,$row['RegistrationDate']);
+    array_push($arr10,$row['month']);
+    
+ 
+   
+   
+
+
+  }
+
+
+/*$sql = "SELECT * from users WHERE fullname LIKE '$term' LIMIT 10";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+  // output data of each row
+  while($row = $result->fetch_assoc()) {
+    array_push($arr,$row['fullname']);
+    echo $row['fullname'];
+  }
+} else {
+  //echo "<h1>id not found</h1>";
+}*/
+
+
+
+
+
+
+
+// Fetch the results and output them as a JSON-encoded string
+//$results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+//echo json_encode($results);
+
+
+
+}
+
+else{
+  $sql = "SELECT *
+  FROM users
+  JOIN plan ON users.id=plan.id
+  LIMIT 10";
+  $result = $conn->query($sql);
+  if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+      array_push($arr,$row['fullname']);
+      array_push($arr2,$row['phone']);
+      array_push($arr3,$row['purpose']);
+      array_push($arr4,$row['age']);
+      array_push($arr5,$row['gender']);
+      array_push($arr6,$row['cash']);
+      array_push($arr7,$row['occupation']);
+      array_push($arr8,$row['workingdays']);
+      array_push($arr9,$row['RegistrationDate']);
+      array_push($arr10,$row['month']);
+      
+      //echo $row['fullname'];
+    }
+  } else {
+    //echo "<h1>id not found</h1>";
+  }
+
+}
+if(isset($_POST['butt2']))
+{
+  
+$date = $_POST['date'];
+//echo  $_POST['date'];
+$ds = strval($date);
+$cDate = date('Y-m-d', strtotime($date));
+$spreadsheet = new Spreadsheet();
+$sheet = $spreadsheet->getActiveSheet();
+
+// Write the headers to the spreadsheet
+$headers = array('ID', 'Name', 'TimeIN', 'TimeOut');
+$sheet->fromArray($headers, NULL, 'A1');
+$x =1;
+
+$sql = "SELECT * FROM  table_attendance";
+$result = mysqli_query($conn, $sql);
+
+
+// Write the data to the spreadsheet
+$row = 2;
+while ($data = $result->fetch_assoc()) {
+    if($data['LOGDATE'] == $date)
+    {
+        $sheet->setCellValue('A'.$row, $data['ID']); array_push($a1,$data['ID']);
+        $sheet->setCellValue('B'.$row, $data['ATTENDANT_NAME']); array_push($a2,$data['ATTENDANT_NAME']);
+        $sheet->setCellValue('C'.$row, $data['TIMEIN']); array_push($a3,$data['TIMEIN']);
+        $sheet->setCellValue('d'.$row, $data['TIMEOUT']); array_push($a4,$data['TIMEOUT']);
+        $row++;
+    }
+
+    }
+
+
+// Create a new CSV writer and save the spreadsheet to a file
+$writer = new Csv($spreadsheet);
+$writer->setDelimiter(',');
+$writer->setEnclosure('"');
+$writer->setLineEnding("\r\n");
+$writer->setSheetIndex(0);
+//$writer->save("$date" . ".csv");
+$path = "../Attendance/" . $date . ".csv";
+$writer->save($path);
+
+
+
+
+
+
+}
+
+else{
+  $sql = "SELECT * FROM  table_attendance";
+$result = mysqli_query($conn, $sql);
+$date = date('Y-m-d');
+
+
+// Write the data to the spreadsheet
+
+while ($data = $result->fetch_assoc()) {
+    if($data['LOGDATE'] == $date)
+    {
+        array_push($a1,$data['ID']);
+       array_push($a2,$data['ATTENDANT_NAME']);
+         array_push($a3,$data['TIMEIN']);
+       array_push($a4,$data['TIMEOUT']);
+       
+    }
+
+    }
+
+
+}
+
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,12 +254,13 @@
 <div class="container-fluid mt-5 bg-light" id="client">
   <div class="row justify-content-between pt-3">
     <div class="col-auto d-flex flex-row">
-      <form action="" method="post">
+      <form  id="f1" name="f1">
         <div class="form-group d-flex flex-row">
-          <input type="text" class="form-control rounded-left" style="border-right: none;" name="name" placeholder="Search by name..." id="">
-          <button type="submit" class="btn bg-white rounded-right" style="border: 1px solid #ced4da; border-left: none; border-radius: .25rem;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+          <input type="text" class="form-control rounded-left" style="border-right: none;"  placeholder="Search by name..." name="search_term" id="search_term" >
+          <button type="submit" onclick="clickme()" class="btn bg-white rounded-right" name="butt" style="border: 1px solid #ced4da; border-left: none; border-radius: .25rem;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
           </svg></button>
+         
         </div>  
       </form>
       <div class="ml-3">
@@ -124,43 +331,155 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>0912332241</td>
-        <td>bodyBulder</td>
-        <td>24</td>
-        <td>M</td>
-        <td>$500</td>
-        <td>Art</td>
-        <td>active</td>
-        <td><small>12 days left</small></td>
+      <?php
+
+      ///////////////////////////////
+   
+      /////////////////////////////
+      $l = count($arr);
+      if(isset( $_GET['search_term']))
+      {
+        $da =0;
+       
+
+      for($i = 0 ; $i < $l ; $i++)
+      {
+        $date_start = $arr9[$i]; 
+        $today = date("Y-m-d");
+        $interval = "$arr10[$i]". " " . "month"; 
+        $dt = new DateTime($date_start);
+        $dt->modify('+' . $interval);
+        $new_date = $dt->format('Y-m-d');
+
+
+       
+
+      echo "<tr>";
+      echo "<th scope='row'>$i</th>";
+      echo "<td>$arr[$i]</td>";
+      echo "<td>$arr2[$i]</td>";
+      echo "<td>$arr3[$i]</td>";
+      echo "<td>$arr4[$i]</td>";
+      echo "<td>$arr5[$i]</td>";
+      echo "<td>$arr6[$i]</td>";
+      echo "<td>$arr7[$i]</td>";
+     
+      if($arr8[$i] > 0)
+      {
+       // echo "<td>active</td>";
+       $date1Timestamp = strtotime($today);
+       $date2Timestamp = strtotime($new_date);
+       
+       if ($date1Timestamp < $date2Timestamp) {
+        echo "<td>active</td>";
+        $da = 1;
+       } elseif ($date1Timestamp > $date2Timestamp) {
+        echo "<td>Inactive</td>";
+       } else {
+        echo "<td>Inactive</td>";
+       }
+      
+
+      }
+
+      else{
+        echo "<td>Inactive</td>";
+
+      }
+      if($da == 0)
+      {
+        echo "<td><small>0 days left</small></td>";
+
+      }
+      else
+      {
+        echo "<td><small>$arr8[$i] left</small></td>";
+
+      }
+     
+      
+    echo "</tr>";
+
+
+      }
+    }
+    else{
+      for($i = 0 ; $i < $l ; $i++)
+      {
+        $da =0;
+       
+
+        for($i = 0 ; $i < $l ; $i++)
+        {
+          $date_start = $arr9[$i]; 
+          $today = date("Y-m-d");
+          $interval = "$arr10[$i]". " " . "month"; 
+          $dt = new DateTime($date_start);
+          $dt->modify('+' . $interval);
+          $new_date = $dt->format('Y-m-d');
+  
+  
+         
+  
+        echo "<tr>";
+        echo "<th scope='row'>$i</th>";
+        echo "<td>$arr[$i]</td>";
+        echo "<td>$arr2[$i]</td>";
+        echo "<td>$arr3[$i]</td>";
+        echo "<td>$arr4[$i]</td>";
+        echo "<td>$arr5[$i]</td>";
+        echo "<td>$arr6[$i]</td>";
+        echo "<td>$arr7[$i]</td>";
+       
+        if($arr8[$i] > 0)
+        {
+         // echo "<td>active</td>";
+         $date1Timestamp = strtotime($today);
+         $date2Timestamp = strtotime($new_date);
+         
+         if ($date1Timestamp < $date2Timestamp) {
+          echo "<td>active</td>";
+          $da = 1;
+         } elseif ($date1Timestamp > $date2Timestamp) {
+          echo "<td>Inactive</td>";
+         } else {
+          echo "<td>Inactive</td>";
+         }
         
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Mark</td>
-        <td>0912332241</td>
-        <td>bodyBulder</td>
-        <td>24</td>
-        <td>M</td>
-        <td>$500</td>
-        <td>Art</td>
-        <td>active</td>
-        <td><small>12 days left</small></td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td>Mark</td>
-        <td>0912332241</td>
-        <td>bodyBulder</td>
-        <td>24</td>
-        <td>M</td>
-        <td>$500</td>
-        <td>Art</td>
-        <td>active</td>
-        <td><small>12 days left</small></td>
-      </tr>
+  
+        }
+  
+        else{
+          echo "<td>Inactive</td>";
+  
+        }
+        if($da == 0)
+        {
+          echo "<td><small>0 days left</small></td>";
+  
+        }
+        else
+        {
+          echo "<td><small>$arr8[$i] left</small></td>";
+  
+        }
+       
+        
+      echo "</tr>";
+  
+  
+        }
+
+      }
+    }
+
+    
+      
+
+      ?>
+    
+ 
+     
     </tbody>
   </table>
 </div>
@@ -170,7 +489,8 @@
     <div class="col-2">
       <form action="" method="post">
         <div class="form-group">
-          <input type="date" class="form-control" name="name" placeholder="Search by name..." id="">
+          <input type="date" class="form-control" name="date" id="">
+          <button name="butt2">Print</button>
         </div>  
       </form>
     </div>  
@@ -184,91 +504,39 @@
     <thead>
       <tr>
         <th scope="col">#</th>
+        <th scope="col">ID</th>
         <th scope="col">Name</th>
-        <th scope="col">Today</th>
-        <th scope="col">Yesterday</th>
-        <th scope="col">B Yesterday</th>
-        <th scope="col">BB Yesterday</th>
-        <th scope="col">BBB Yesterday</th>
+        <th scope="col">Time Entered</th>
+        <th scope="col">Time exited</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
+      <?php
+      $l = count($a1);
 
-        
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Mark</td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
+      for($i = 0 ; $i < $l ; $i++)
+      {
+       
+        echo "<tr>";
+        echo "<th scope='row'>$i</th>";
+        echo "<td>$a1[$i]</td>";
+        echo "<td>$a2[$i]</td>";
+        echo "<td>$a3[$i]</td>";
+        echo "<td>$a4[$i]</td>";
+        echo "</tr>";
+
+      }
+   
+      
+
+      ?>
      
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td>Mark</td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
-        <td>
-          <span>10:30 IN</span>
-          <span>12:00 OUT</span>
-        </td>
+       
+      
         
-      </tr>
+      
+    
+    
     </tbody>
   </table>
 </div>
@@ -291,8 +559,29 @@
     a.style.display="none";
     c.style.display="block";
   }
+  function clickme()
+  {
+   
+     // Get a reference to the text field and the form
+     var textField = document.getElementById("search_term");
+    var form = document.getElementById("f1");
+    document.getElementById('f1').action = 'basic-data.php?term=' + encodeURIComponent(textField); 
+
+    // Listen for the keydown event on the text field
+    //textField.addEventListener("input", function(event) {
+        // Submit the form
+        form.submit();
+
+   
+   // }
+   // );
+
+  }
 
 </script>
+
+
+
 
 
 
