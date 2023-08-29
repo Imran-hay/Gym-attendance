@@ -50,13 +50,14 @@ require_once '../Database/DB.php';
     //echo $new_date; // Output: 2023-08-20
     
     ///////////////////////////////////////////////////////
+    echo "<h1>$days</h1>";
     if($days == 0)
     {
       $message = "subscription ended";
       
     }
     //////////////////////////////////////////////////////////
-    if($today == $new_date)
+    else if($today == $new_date)
     {
       $message = "subscription expired";
 

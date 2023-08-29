@@ -387,6 +387,68 @@ if ($res->num_rows > 0) {
 
 }
 
+$month = '';
+$year = '';
+
+if(isset($_POST['butt3']))
+{
+  $month = $_POST['month'];
+  $year = $_POST['year'];
+
+//$ds = strval($date);
+//$dx = date('Y-m-d');
+//$cDate =intval(date('Y', strtotime($dx))) ;
+//echo var_dump($cDate);
+$spreadsheet = new Spreadsheet();
+$sheet = $spreadsheet->getActiveSheet();
+
+// Write the headers to the spreadsheet
+$headers = array('ID', 'Name', 'TimeIN', 'TimeOut','LOGDATE');
+$sheet->fromArray($headers, NULL, 'A1');
+$x =1;
+
+$sql = "SELECT * FROM  table_attendance";
+$result = mysqli_query($conn, $sql);
+
+
+// Write the data to the spreadsheet
+$row = 2;
+while ($data = $result->fetch_assoc()) {
+  $pm = $cDate =intval(date('m', strtotime($data['LOGDATE'])));
+  $py = $cDate =intval(date('Y', strtotime($data['LOGDATE'])));
+
+    if($pm == $month && $py == $year)
+    {
+        $sheet->setCellValue('A'.$row, $data['ID']); array_push($a1,$data['ID']);
+        $sheet->setCellValue('B'.$row, $data['ATTENDANT_NAME']); array_push($a2,$data['ATTENDANT_NAME']);
+        $sheet->setCellValue('C'.$row, $data['TIMEIN']); array_push($a3,$data['TIMEIN']);
+        $sheet->setCellValue('d'.$row, $data['TIMEOUT']); array_push($a4,$data['TIMEOUT']);
+        $row++;
+    }
+
+    }
+
+
+// Create a new CSV writer and save the spreadsheet to a file
+$writer = new Csv($spreadsheet);
+$writer->setDelimiter(',');
+$writer->setEnclosure('"');
+$writer->setLineEnding("\r\n");
+$writer->setSheetIndex(0);
+//$writer->save("$date" . ".csv");
+$file = $month. "-". $year;
+$path = "../Attendance/" . $file . ".csv";
+$writer->save($path);
+
+
+
+
+
+
+
+  
+}
+
 
 
 ?>
@@ -719,6 +781,19 @@ if ($res->num_rows > 0) {
         </div>  
       </form>
     </div>  
+
+    <!--print by month -->
+
+    <div class="col-3">
+      <form action="basic-data.php" method="post">
+        <div class="form-group">
+          <input type="number" class="form-control" name="month" id="" placeholder="Month.Example-03">
+          <input type="number" class="form-control" name="year" id="" placeholder="Year.Example-2023">
+          <button name="butt3">Print</button>
+        </div>  
+      </form>
+    </div>
+
     <div class="col-2">
     <button class="btn my-2 my-sm-0 w-100" style="color:#fff; background-color: #64549C; border-radius: 12px;">Downloads</button>    
     
